@@ -1,0 +1,39 @@
+name: Build and Deploy React App to ACR and Azure Container Apps 🚀
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🔄 Checkout code
+        uses: actions/checkout@v3
+
+      - name: 🔐 Log in to Azure
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: 🐳 Log in to ACR
+        uses: azure/docker-login@v2
+        with:
+          login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+
+      - name: 🧱 Build and push Docker image
+        run: |
+          docker build -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/grogu-frontend:${{ github.sha }} .
+          docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/grogu-frontend:${{ github.sha }}
+
+      - name: 📦 Deploy to Azure Container Apps
+        uses: azure/container-apps-deploy-action@v1
+        with:
+          imageToDeploy: ${{ secrets.REGISTRY_LOGIN_SERVER }}/grogu-frontend:${{ github.sha }}
+          containerAppName: grogu-frontend
+          resourceGroup: groguResourceGroup
+          acrName: grogufrontendcontainerregistry
