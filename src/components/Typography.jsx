@@ -6,7 +6,6 @@ export const Heading = styled.h1`
   font-weight: bold;
   margin-bottom: ${({ theme }) => theme.spacing.medium};
   color: ${({ theme }) => theme.colors.text};
-  text-align: center; // Center align for mobile-first design
 `;
 
 export const Text = styled.p`
@@ -14,5 +13,5 @@ export const Text = styled.p`
   font-family: ${({ theme }) => theme.fontFamily};
   color: ${({ theme }) => theme.colors.text};
   margin-bottom: ${({ theme }) => theme.spacing.small};
-  line-height: 1.5; // Improve readability
+  line-height: 1.5;
 `;
